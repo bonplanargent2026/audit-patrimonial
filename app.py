@@ -13,6 +13,7 @@ Navigation par onglets :
                            11. Objectifs & risque
                            📊  Bilan patrimonial
 """
+import json
 import streamlit as st
 from datetime import date
 
@@ -122,6 +123,55 @@ st.markdown(
     "puis cliquez sur <strong>Calculer le bilan</strong> dans l'onglet 📊.</p>",
     unsafe_allow_html=True,
 )
+st.markdown("---")
+
+# ─────────────────────────────────────────────
+#  Sauvegarde / Chargement de session
+# ─────────────────────────────────────────────
+
+_SKIP_KEYS = {"bilan_calcule", "bilan_data", "bilan_result"}
+
+def _session_to_json() -> str:
+    """Sérialise le session_state en JSON (valeurs primitives uniquement)."""
+    data = {}
+    for k, v in st.session_state.items():
+        if k.startswith("_") or k in _SKIP_KEYS:
+            continue
+        if isinstance(v, (str, int, float, bool, list, dict, type(None))):
+            data[k] = v
+    return json.dumps(data, ensure_ascii=False, indent=2, default=str)
+
+col_save, col_load, _ = st.columns([1, 2, 3])
+
+with col_save:
+    st.download_button(
+        label="💾 Sauvegarder ma progression",
+        data=_session_to_json(),
+        file_name=f"audit_{date.today().strftime('%Y%m%d')}.json",
+        mime="application/json",
+        help="Télécharge un fichier JSON pour reprendre plus tard",
+    )
+
+with col_load:
+    uploaded_file = st.file_uploader(
+        "📂 Reprendre une session sauvegardée",
+        type="json",
+        label_visibility="visible",
+        key="_uploader",
+    )
+    if uploaded_file is not None and not st.session_state.get("_session_loaded"):
+        try:
+            loaded_data = json.loads(uploaded_file.read())
+            for k, v in loaded_data.items():
+                st.session_state[k] = v
+            st.session_state["_session_loaded"] = True
+            st.success("Session restaurée avec succès !")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Erreur lors du chargement : {e}")
+    elif uploaded_file is None:
+        st.session_state["_session_loaded"] = False
+
 st.markdown("---")
 
 # ─────────────────────────────────────────────
