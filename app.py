@@ -1668,8 +1668,8 @@ with tab_profil:
         st.session_state["score_mif2"] = score_mif2
         st.session_state["profil_final"] = profil_final
         st.session_state["alloc_amf"] = alloc_amf
-        st.session_state["score_amf"] = score_amf
-        st.session_state["score_esg"] = score_esg
+        st.session_state["res_score_amf"] = score_amf
+        st.session_state["res_score_esg"] = score_esg
         st.session_state["profil_calcule"] = True
 
     # ── Affichage des résultats ───────────────────────────────────────────────
@@ -1680,8 +1680,8 @@ with tab_profil:
         score_mif2   = st.session_state["score_mif2"]
         profil_final = st.session_state["profil_final"]
         alloc_amf    = st.session_state["alloc_amf"]
-        score_amf    = st.session_state["score_amf"]
-        score_esg    = st.session_state["score_esg"]
+        score_amf    = st.session_state["res_score_amf"]
+        score_esg    = st.session_state["res_score_esg"]
 
         # ── Bandeau score MIF2 ────────────────────────────────────────────────
         mif2_colors = {1: "#276749", 2: "#276749", 3: "#2c7a7b", 4: "#d69e2e", 5: "#dd6b20", 6: "#c53030", 7: "#742a2a"}
